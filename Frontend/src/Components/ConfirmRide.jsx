@@ -43,8 +43,9 @@ function ConfirmRide(props) {
         </div>
         <button
         onClick={()=>{
+          props.setVehiclePanel(false)
           props.setConfirmRidePanel(false)
-           props.setVehicleFound(true);
+           props.setWaitingForDriver(true);
         }}
         
           className="w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg"

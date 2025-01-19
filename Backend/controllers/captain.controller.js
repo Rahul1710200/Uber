@@ -47,6 +47,7 @@ if(!errors.isEmpty()){
 
 const {email,password}=req.body
 
+
 const captain=await captainModel.findOne({email}).select('+password')
 
    if(!captain){
@@ -67,7 +68,7 @@ res.status(201).json({captain,token})
 }
 
 module.exports.getCaptainProfile = async (req, res, next) => {
-    res.status(200).json( {captain:req.captain});
+    res.status(200).json( req.captain);
 }
 
 module.exports.logoutCaptain = async (req, res, next) => {

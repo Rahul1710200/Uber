@@ -6,7 +6,7 @@ import LocationSearchPanel from "../Components/LocationSearchPanel";
 import Vehiclepanel from "../Components/Vehiclepanel";
 import ConfirmRide from "../Components/ConfirmRide";
 import WaitFordriver from "../Components/WaitFordriver";
-import LookingFordriver from "../Components/LookingFordriver";
+// import LookingFordriver from "../Components/LookingFordriver";
 
 export default function Home() {
   const [pickup, setPickup] = useState("");
@@ -26,6 +26,11 @@ export default function Home() {
   const submitHandler = (e) => {
     e.preventDefault();
   };
+
+  const setCurrentLocation=()=>{
+    setPickup("Current location")
+
+  }
   useGSAP(() => {
     if (vehicleFound) {
       gsap.to(vehicleFoundRef.current, {
@@ -43,7 +48,7 @@ export default function Home() {
         transform: "translateY(0)",
       });
     } else {
-      gsap.to(vehicleFoundRef.current, {
+      gsap.to(waitingForDriverRef.current, {
         transform: "translateY(100%)",
       });
     }
@@ -98,7 +103,7 @@ export default function Home() {
       <div className="h-screen w-screen">
         <img
           className="w-full h-full object-cover"
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPsQfKVcmFKoAydx-uqkFICDgldRDQcCe1dA&s"
+          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
           alt="Uber logo"
         />
       </div>
@@ -125,6 +130,7 @@ export default function Home() {
               className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full"
               type="text"
               onClick={() => {
+                  setCurrentLocation();
                 setpanelOpen(true);
               }}
               value={pickup}
@@ -135,6 +141,7 @@ export default function Home() {
             />
             <input
               onClick={() => {
+              
                 setpanelOpen(true);
               }}
               value={destination}
@@ -159,26 +166,33 @@ export default function Home() {
         ref={vehiclePanelRef}
         className="fixed  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
       >
-        <Vehiclepanel setConfirmRidePanel={setConfirmRidePanel} setVehiclePanel={setVehiclePanel} />
+        <Vehiclepanel
+          setConfirmRidePanel={setConfirmRidePanel}
+          setVehiclePanel={setVehiclePanel}
+        />
       </div>
       <div
         ref={confirmRidePanelRef}
         className="fixed  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
       >
-      <ConfirmRide setConfirmRidePanel={setConfirmRidePanel} setVehicleFound={setVehicleFound} />
+        <ConfirmRide
+        setVehiclePanel={setVehiclePanel}
+          setConfirmRidePanel={setConfirmRidePanel}
+          setWaitingForDriver={setWaitingForDriver}
+        />
       </div>
 
-      <div
-      ref={vehicleFoundRef}
+      {/* <div
+        ref={vehicleFoundRef}
         className="fixed  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
       >
-      <LookingFordriver setVehicleFound={setVehicleFound}/>
-      </div>
+        <LookingFordriver setVehicleFound={setVehicleFound} />
+      </div> */}
       <div
-      ref={waitingForDriverRef}
+        ref={waitingForDriverRef}
         className="fixed  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
       >
-      <WaitFordriver setWaitingForDriver={setWaitingForDriver} />
+        <WaitFordriver setWaitingForDriver={setWaitingForDriver} />
       </div>
     </div>
   );

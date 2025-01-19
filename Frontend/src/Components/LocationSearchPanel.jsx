@@ -2,13 +2,13 @@ import React from 'react'
 
 function LocationSearchPanel(props) {
 
-  const locations=[
-    "1st location",
-    "1st location",
-    "1st location",
-    "1st location",
-    "1st location",
-  ]
+ const locations = [
+   "Amber Fort",
+   "Hawa Mahal",
+   "City Palace",
+   "Jantar Mantar",
+   "Nahargarh Fort",
+ ];
   return (
     <div>
       {/* Display fetched suggestions */}
