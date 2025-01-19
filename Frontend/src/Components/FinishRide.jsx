@@ -67,12 +67,12 @@ const FinishRide = (props) => {
         </div>
 
         <div className="mt-10 w-full">
-          <button
+          <Link to='/captain-home'
             onClick={endRide}
             className="w-full mt-5 flex  text-lg justify-center bg-green-600 text-white font-semibold p-3 rounded-lg"
           >
             Finish Ride
-          </button>
+          </Link>
         </div>
       </div>
     </div>
