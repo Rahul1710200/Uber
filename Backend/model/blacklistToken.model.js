@@ -13,6 +13,7 @@ const blacklistedTokenSchema = new mongoose.Schema({
   },
 });
 
+
 // Create an index on the token field for faster lookups
 blacklistedTokenSchema.index({ token: 1 });
 
