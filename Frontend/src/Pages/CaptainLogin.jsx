@@ -6,13 +6,18 @@ import axios from 'axios';
 
 const Captainlogin =  () => {
   const [email, setEmail] = useState('');
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState("")
+  
   const [password, setPassword] = useState('');
 
   const navigate=useNavigate()
   const {captain,setCaptain}=useContext(CaptainDataContext)
 
   const submitHandler = async (e) => {
+    
     e.preventDefault();
+    setLoading(true)
     const captain = {
       email: email,
       password: password,
@@ -31,7 +36,9 @@ const Captainlogin =  () => {
         navigate("/captain-home");
       }
     } catch (err) {
-      console.log("errrr", err);
+      setError("Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
     }
 
           
@@ -49,19 +56,24 @@ const Captainlogin =  () => {
           alt="Uber Driver Logo"
         />
 
-        <form
-          onSubmit={(e) => submitHandler(e)}
-          className="w-full"
-        >
+        <form onSubmit={(e) => submitHandler(e)} className="w-full">
           <h3 className="text-lg font-medium mb-2">What's your email</h3>
           <input
             required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setError("");
+              setEmail(e.target.value);
+            }}
             className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
             type="email"
             placeholder="email@example.com"
           />
+          {error && (
+            <p className="text-red-500 lg:text-[1.2vw] text-[3.5vw]  font-semibold  mb-4">
+              {error}
+            </p>
+          )}
 
           <h3 className="text-lg font-medium mb-2">Enter Password</h3>
           <input
@@ -73,24 +85,34 @@ const Captainlogin =  () => {
             placeholder="password"
           />
 
-          <button
-            className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"
-          >
+          <button className="transform transition-transform duration-150 active:scale-95 bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base">
             Login
           </button>
         </form>
 
         <p className="text-center">
-          Join a fleet?{' '}
+          Join a fleet?{" "}
           <Link to="/captain-signup" className="text-blue-600">
             Register as a Captain
           </Link>
         </p>
       </div>
-      <div className="w-full max-w-md lg:max-w-lg mt-4">
+
+      {loading ? (
+        <div className="flex justify-center gap-2 mb-[7vw] items-center space-x-2">
+          <span className=" text-green-400 text-2xl">Logging In</span>
+          <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots"></div>
+          <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[200ms]"></div>
+          <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[400ms]"></div>
+        </div>
+      ) : (
+        ""
+      )}
+
+      <div className="  w-full max-w-md lg:max-w-lg mt-4">
         <Link
           to="/login"
-          className="bg-[#d5622d] flex items-center justify-center text-white font-semibold rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"
+          className="transform transition-transform duration-150 active:scale-95 bg-[#d5622d] flex items-center justify-center text-white font-semibold rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"
         >
           Sign in as User
         </Link>

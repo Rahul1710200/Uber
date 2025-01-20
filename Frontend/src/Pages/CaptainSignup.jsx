@@ -8,6 +8,9 @@ const CaptainSignup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
+    const [error, setError] = useState("")
+    const [error2, setError2] = useState("")
+    const [error3, setError3] = useState("")
   const [lastName, setLastName] = useState('');
   const [vehicleColor, setVehicleColor] = useState('');
   const [vehiclePlate, setVehiclePlate] = useState('');
@@ -22,6 +25,19 @@ const CaptainSignup = () => {
   const submitHandler = async (e) => {
 
     e.preventDefault();
+     setError("");
+     setError2("");
+     setError3("");
+       if (password.length < 6) {
+         setError("Password must be at least 6 characters long");
+         return;
+       } 
+     if (vehicleCapacity>4){
+       setError3("vehicle capacity must be at most 4");
+       return;
+
+     }
+     
     const captainData = {
       fullName: {
         firstName: firstName,
@@ -37,23 +53,26 @@ const CaptainSignup = () => {
       },
     };
     console.log(captainData);
-    try{
-        const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/register`,captainData );
-        console.log("ress",response);
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captain/register`,
+        captainData
+      );
+      console.log("ress", response);
 
-        
-          if(response.status===201){
-            setCaptain(response.data.captain)
-            localStorage.setItem('token',response.data.token)
-            navigate('/captain-home')
-
-          }
-         
-        }
-         catch(err){
-            console.log("errrr",err);
-          }
-
+      if (response.status === 201) {
+        setCaptain(response.data.captain);
+        localStorage.setItem("token", response.data.token);
+        navigate("/captain-home");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        // Handle the user already exists error
+        setError2(error.response.data.message || "Registration failed");
+      } else {
+        setError2("An error occurred during registration");
+      }
+    }
           
       
 
@@ -75,7 +94,7 @@ const CaptainSignup = () => {
   },[captain])
 
   return (
-    <div className="py-5 px-5 h-screen flex flex-col items-center justify-between bg-gray-100">
+    <div className="py-5 px-5 h-screen overflow-hidden flex flex-col items-center justify-between bg-gray-100">
       <div className="w-full max-w-md lg:max-w-lg bg-white rounded-lg shadow-md p-6">
         <img
           className="w-20 mb-3 mx-auto"
@@ -84,7 +103,16 @@ const CaptainSignup = () => {
         />
 
         <form onSubmit={(e) => submitHandler(e)} className="w-full">
-          <h3 className="text-lg font-medium mb-2">What's our Captain's name</h3>
+          {error2 ? (
+            <div className="text-red-500 lg:text-[1.8vw] lg:w-full text-[5vw] font-semibold lg:ml-[8vw]  ml-[18vw]">
+              {error2}
+            </div>
+          ) : (
+            ""
+          )}
+          <h3 className="text-lg font-medium mb-2">
+            What's our Captain's name
+          </h3>
           <div className="flex flex-col lg:flex-row gap-4 mb-7">
             <input
               required
@@ -92,7 +120,10 @@ const CaptainSignup = () => {
               type="text"
               placeholder="First name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              onChange={(e) => {
+                setError2("");
+                setFirstName(e.target.value);
+              }}
             />
             <input
               required
@@ -100,15 +131,23 @@ const CaptainSignup = () => {
               type="text"
               placeholder="Last name"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              onChange={(e) => {
+                setError2("");
+                setLastName(e.target.value);
+              }}
             />
           </div>
 
-          <h3 className="text-lg font-medium mb-2">What's our Captain's email</h3>
+          <h3 className="text-lg font-medium mb-2">
+            What's our Captain's email
+          </h3>
           <input
             required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setError2("");
+              setEmail(e.target.value);
+            }}
             className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
             type="email"
             placeholder="email@example.com"
@@ -118,7 +157,11 @@ const CaptainSignup = () => {
           <input
             required
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setError2("");
+              setError("");
+              setPassword(e.target.value);
+            }}
             className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
             type="password"
             placeholder="password"
@@ -151,8 +194,13 @@ const CaptainSignup = () => {
               type="number"
               placeholder="Vehicle Capacity"
               value={vehicleCapacity}
-              onChange={(e) => setVehicleCapacity(e.target.value)}
+              onChange={(e) => {
+                setError3("");
+                setVehicleCapacity(e.target.value);
+              }}
             />
+         
+          
             <select
               required
               className="bg-[#eeeeee] w-full lg:w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base"
@@ -167,6 +215,22 @@ const CaptainSignup = () => {
               <option value="moto">Moto</option>
             </select>
           </div>
+          {error ? (
+            <div className="text-red-500 text-[4.5vw] lg:text-[1.2vw] mb-[1vw] font-semibold">
+              {error}
+            </div>
+          ) : (
+            ""
+          )}
+          {error3 ? (
+            <div className="text-red-500 text-[4.5vw] lg:text-[1.2vw] mb-[1vw] font-semibold">
+              {error3}
+            </div>
+          ) : (
+            ""
+          )}
+          
+          
 
           <button className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base">
             Create Captain Account
@@ -174,7 +238,7 @@ const CaptainSignup = () => {
         </form>
 
         <p className="text-center">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link to="/captain-login" className="text-blue-600">
             Login here
           </Link>
@@ -182,8 +246,8 @@ const CaptainSignup = () => {
       </div>
       <div className="text-center text-sm text-gray-500 mt-4">
         <p>
-          This site is protected by reCAPTCHA and the{' '}
-          <span className="underline">Google Privacy Policy</span> and{' '}
+          This site is protected by reCAPTCHA and the{" "}
+          <span className="underline">Google Privacy Policy</span> and{" "}
           <span className="underline">Terms of Service</span> apply.
         </p>
       </div>

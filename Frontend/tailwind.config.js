@@ -1,12 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
- content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+ animation: {
+        bounceDots: 'bounceDots 1.5s infinite',
+      },
+      keyframes: {
+        bounceDots: {
+          '0%, 80%, 100%': { transform: 'scale(0)', opacity: 0.3 },
+          '40%': { transform: 'scale(1)', opacity: 1 },
+        },
+    
+      },
+    },
   },
   plugins: [],
-}
+};
 
