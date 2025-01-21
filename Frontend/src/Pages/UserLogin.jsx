@@ -92,7 +92,7 @@ function UserLogin() {
         </p>
       </div>
       {loading ? (
-        <div className="flex justify-center gap-2 mb-[7vw] items-center space-x-2">
+        <div className="flex justify-center gap-2 lg:mb-[1vw] mb-[7vw] items-center ">
           <span className=" text-green-400 text-2xl">Logging In</span>
           <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots"></div>
           <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[200ms]"></div>

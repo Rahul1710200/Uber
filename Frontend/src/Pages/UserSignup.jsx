@@ -7,6 +7,8 @@ const UserSignup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false);
+  
   const [error2, setError2] = useState("")
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -15,12 +17,14 @@ const UserSignup = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+   
     setError("");
     setError2("")
     if(password.length<6){
       setError("Password must be at least 6 characters long")
       return;
     } 
+     setLoading(true);
     const newUser = {
       fullName: {
         firstName: firstName,
@@ -57,6 +61,11 @@ try{
     setError2("An error occurred during registration");
   }
 }
+  finally{
+      setLoading(false)
+
+    }
+
    
   };
 
@@ -72,7 +81,9 @@ try{
 
           <form onSubmit={(e) => submitHandler(e)} className="w-full">
             {error2 ? (
-              <div className="text-red-500 lg:text-[1.8vw] lg:w-full text-[5vw] font-semibold lg:ml-[3.5vw] ml-[18vw]">{error2}</div>
+              <div className="text-red-500 lg:text-[1.8vw] lg:w-full text-[5vw] font-semibold lg:ml-[3.5vw] ml-[18vw]">
+                {error2}
+              </div>
             ) : (
               ""
             )}
@@ -85,9 +96,10 @@ try{
                 placeholder="First name"
                 value={firstName}
                 onChange={(e) => {
-                                  setError2("");
+                  setError2("");
 
-                  setFirstName(e.target.value)}}
+                  setFirstName(e.target.value);
+                }}
               />
               <input
                 required
@@ -96,9 +108,10 @@ try{
                 placeholder="Last name"
                 value={lastName}
                 onChange={(e) => {
-                                  setError2("");
+                  setError2("");
 
-                  setLastName(e.target.value)}}
+                  setLastName(e.target.value);
+                }}
               />
             </div>
 
@@ -107,8 +120,9 @@ try{
               required
               value={email}
               onChange={(e) => {
-                setError2("")
-                setEmail(e.target.value)}}
+                setError2("");
+                setEmail(e.target.value);
+              }}
               className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
               type="email"
               placeholder="email@example.com"
@@ -139,6 +153,16 @@ try{
               Create account
             </button>
           </form>
+          {loading ? (
+            <div className="flex justify-center gap-2 lg:mb-[1vw] mb-[7vw] items-center ">
+              <span className=" text-green-400 text-2xl">Logging In</span>
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots"></div>
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[200ms]"></div>
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[400ms]"></div>
+            </div>
+          ) : (
+            " "
+          )}
 
           <p className="text-center mt-4">
             Already have an account?{" "}

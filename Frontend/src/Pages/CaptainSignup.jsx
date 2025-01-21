@@ -8,6 +8,7 @@ const CaptainSignup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
+  const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [error2, setError2] = useState("")
     const [error3, setError3] = useState("")
@@ -37,6 +38,8 @@ const CaptainSignup = () => {
        return;
 
      }
+         setLoading(true);
+
      
     const captainData = {
       fullName: {
@@ -72,6 +75,8 @@ const CaptainSignup = () => {
       } else {
         setError2("An error occurred during registration");
       }
+    }finally{
+      setLoading(false)
     }
           
       
@@ -94,8 +99,8 @@ const CaptainSignup = () => {
   },[captain])
 
   return (
-    <div className="py-5 px-5 h-screen overflow-hidden flex flex-col items-center justify-between bg-gray-100">
-      <div className="w-full max-w-md lg:max-w-lg bg-white rounded-lg shadow-md p-6">
+    <div className=" px-5 h-screen flex flex-col items-center justify-between bg-gray-100">
+      <div className="w-full max-w-md lg:max-w-lg bg-white rounded-lg shadow-md px-6">
         <img
           className="w-20 mb-3 mx-auto"
           src="https://www.svgrepo.com/show/505031/uber-driver.svg"
@@ -199,8 +204,7 @@ const CaptainSignup = () => {
                 setVehicleCapacity(e.target.value);
               }}
             />
-         
-          
+
             <select
               required
               className="bg-[#eeeeee] w-full lg:w-1/2 rounded-lg px-4 py-2 border text-lg placeholder:text-base"
@@ -229,8 +233,17 @@ const CaptainSignup = () => {
           ) : (
             ""
           )}
-          
-          
+
+          {loading ? (
+            <div className="flex justify-center gap-2 lg:mb-[1vw] mb-[7vw] items-center ">
+              <span className=" text-green-400 text-2xl">Logging In</span>
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots"></div>
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[200ms]"></div>
+              <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[400ms]"></div>
+            </div>
+          ) : (
+            ""
+          )}
 
           <button className="bg-[#111] text-white font-semibold mb-3 rounded-lg px-4 py-2 w-full text-lg placeholder:text-base">
             Create Captain Account
