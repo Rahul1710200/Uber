@@ -155,7 +155,7 @@ try{
           </form>
           {loading ? (
             <div className="flex justify-center gap-2 lg:mb-[1vw] mb-[7vw] items-center ">
-              <span className=" text-green-400 text-2xl">Logging In</span>
+              <span className=" text-green-400 text-2xl">Signing in</span>
               <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots"></div>
               <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[200ms]"></div>
               <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[400ms]"></div>
