@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import axios from 'axios'
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import "remixicon/fonts/remixicon.css";
@@ -6,31 +7,77 @@ import LocationSearchPanel from "../Components/LocationSearchPanel";
 import Vehiclepanel from "../Components/Vehiclepanel";
 import ConfirmRide from "../Components/ConfirmRide";
 import WaitFordriver from "../Components/WaitFordriver";
+import debounce from "lodash.debounce";
+
 // import LookingFordriver from "../Components/LookingFordriver";
 
 export default function Home() {
   const [pickup, setPickup] = useState("");
+  const [locations, setLocations] = useState([]);
   const [destination, setDestination] = useState("");
   const [panelOpen, setpanelOpen] = useState(false);
+  const [activeField, setActiveField] = useState(""); // Could be "pickup" or "destination"
+
   const [vehiclePanel, setVehiclePanel] = useState(false);
-  const [confirmRidePanel, setConfirmRidePanel] = useState(false)
-  const [vehicleFound, setVehicleFound] = useState(false)
-  const [waitingForDriver, setWaitingForDriver] = useState(false)
+  const [confirmRidePanel, setConfirmRidePanel] = useState(false);
+  const [pickUpSuggestions, setPickUpSuggestions] = useState([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState([]);
+  const [vehicleFound, setVehicleFound] = useState(false);
+  const [waitingForDriver, setWaitingForDriver] = useState(false);
   const vehiclePanelRef = useRef(null);
   const panelRef = useRef();
   const panelCloseRef = useRef();
-  const confirmRidePanelRef=useRef()
-  const vehicleFoundRef=useRef()
-  const waitingForDriverRef=useRef()
+  const confirmRidePanelRef = useRef();
+  const vehicleFoundRef = useRef();
+  const waitingForDriverRef = useRef();
 
   const submitHandler = (e) => {
     e.preventDefault();
   };
 
-  const setCurrentLocation=()=>{
-    setPickup("Current location")
+  const fetchSuggestions = async (query) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+        {
+          params: { input: query },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response;
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+      return [];
+    }
+  };
 
-  }
+  const debouncedFetchPickupSuggestions = debounce(async (value) => {
+    if (value.trim().length < 3) {
+      // Don't make the request if the input is less than 3 characters
+      setLocations([]);
+      return;
+    }
+    const suggestions = await fetchSuggestions(value);
+    console.log("sugg", suggestions);
+    setLocations([]);
+    setLocations(suggestions);
+  }, 300);
+
+  const debouncedFetchDestinationSuggestions = debounce(async (value) => {
+    if (value.trim().length < 3) {
+      // Don't make the request if the input is less than 3 characters
+      setLocations([]);
+      return;
+    }
+    const suggestions = await fetchSuggestions(value);
+    console.log("sugg", suggestions);
+    setLocations([]);
+    setLocations(suggestions);
+  }, 300);
+
+  const setCurrentLocation = () => {};
   useGSAP(() => {
     if (vehicleFound) {
       gsap.to(vehicleFoundRef.current, {
@@ -109,13 +156,13 @@ export default function Home() {
           />
         </div>
         <div className="flex flex-col justify-end  absolute  h-screen top-0 lg:w-[30vw]  w-full">
-          <div className="h-[30%] bg-white p-5 relative ">
+          <div className="h-[33%] bg-white p-5 relative ">
             <h5
               onClick={() => {
                 setpanelOpen(false);
               }}
               ref={panelCloseRef}
-              className="absolute right-6 opacity-0 cursor-pointer top-[6vw] text-2xl"
+              className="absolute right-6 opacity-0 cursor-pointer top-[6vw] lg:top-[1.5vw] text-3xl"
             >
               <i className="ri-arrow-down-wide-line"></i>
             </h5>
@@ -126,36 +173,58 @@ export default function Home() {
               }}
               className="relative py-3"
             >
-              <div className="line absolute h-16 w-1 top-[50%] -translate-y-1/2 left-5 bg-gray-700 rounded-full"></div>
+              <div className="line absolute h-16 w-1 top-[35%] -translate-y-1/2 left-5 bg-gray-700 rounded-full"></div>
               <input
                 className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full"
                 type="text"
                 onClick={() => {
+                  setActiveField("pickup");
                   setCurrentLocation();
                   setpanelOpen(true);
                 }}
                 value={pickup}
                 onChange={(e) => {
                   setPickup(e.target.value);
+                  debouncedFetchPickupSuggestions(e.target.value);
                 }}
                 placeholder="Add a pick-up location"
               />
               <input
                 onClick={() => {
+               setActiveField("destination");
                   setpanelOpen(true);
                 }}
                 value={destination}
                 onChange={(e) => {
                   setDestination(e.target.value);
+                  debouncedFetchDestinationSuggestions(e.target.value);
                 }}
                 className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full  mt-3"
                 type="text"
                 placeholder="Enter your destination"
               />
+              <button
+              onClick={
+                (e)=>{
+                  e.preventDefault();
+                  setVehiclePanel(true);
+                  setpanelOpen(false);
+                }
+              }
+                type="submit"
+                className="mt-[2vw]  lg:mt-[0.5vw] w-full  rounded-md bg-black text-white py-[2vw] lg:py-[0.6vw] px-[0.6vw]"
+              >
+              
+                Find a Trip
+              </button>
             </form>
           </div>
           <div ref={panelRef} className="h-[0%] bg-white  ">
             <LocationSearchPanel
+            setPickup={setPickup}
+            setDestination={setDestination}
+             activeField={activeField}
+              locations={locations}
               setPanelOpen={setpanelOpen}
               vehiclePanel={vehiclePanel}
               setVehiclePanel={setVehiclePanel}
