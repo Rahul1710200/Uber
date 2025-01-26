@@ -100,6 +100,8 @@ console.log("Value of fareResponse:", fareResponse);
   return fare;
 };
 
+module.exports.getFare=getFare
+
 const getOtp=(num)=>{
   const min = Math.pow(10, num - 1); 
   const max = Math.pow(10, num) - 1; 

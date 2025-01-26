@@ -35,7 +35,7 @@ function CaptainProtectedWrapper({ children }) {
         }
       } catch (error) {
         console.error("Error fetching captain profile:", error);
-        localStorage.removeItem("token");
+        // localStorage.removeItem("token");
         navigate("/captain-login");
       }
     };

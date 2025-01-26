@@ -15,11 +15,13 @@ export default function Home() {
   const [pickup, setPickup] = useState("");
   const [locations, setLocations] = useState([]);
   const [destination, setDestination] = useState("");
+  const [vehicleType, setVehicleType] = useState("")
   const [panelOpen, setpanelOpen] = useState(false);
   const [activeField, setActiveField] = useState(""); // Could be "pickup" or "destination"
 
   const [vehiclePanel, setVehiclePanel] = useState(false);
   const [confirmRidePanel, setConfirmRidePanel] = useState(false);
+  const [fare, setFare] = useState({})
   const [pickUpSuggestions, setPickUpSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
   const [vehicleFound, setVehicleFound] = useState(false);
@@ -31,9 +33,7 @@ export default function Home() {
   const vehicleFoundRef = useRef();
   const waitingForDriverRef = useRef();
 
-  const submitHandler = (e) => {
-    e.preventDefault();
-  };
+ 
 
   const fetchSuggestions = async (query) => {
     try {
@@ -140,6 +140,30 @@ export default function Home() {
       });
     }
   }, [panelOpen]);
+
+   const submitHandler = async () => {
+   
+
+     try {
+       const response = await axios.post(
+         `${import.meta.env.VITE_BASE_URL}/ride/getfare`,
+         
+            { pickup, destination }, 
+            {
+             headers: {
+             Authorization: `Bearer ${localStorage.getItem("token")}`,
+           },
+          }
+         
+       );
+       console.log("fare", response);
+       setFare(response)
+
+       return response;
+     } catch (error) {
+       console.error("Error fetching suggestions:", error);
+     }
+   };
   return (
     <div className="h-screen w-full    flex    justify-center bg-gray-100  overflow-hidden">
       <div className="lg:h-[80vw] relative lg:w-[30vw] ">
@@ -168,9 +192,7 @@ export default function Home() {
             </h5>
             <h4 className="text-2xl font-semibold">Find a trip</h4>
             <form
-              onSubmit={(e) => {
-                submitHandler(e);
-              }}
+            
               className="relative py-3"
             >
               <div className="line absolute h-16 w-1 top-[35%] -translate-y-1/2 left-5 bg-gray-700 rounded-full"></div>
@@ -204,21 +226,14 @@ export default function Home() {
                 placeholder="Enter your destination"
               />
               <button
-              onClick={
-                (e)=>{
-                  // Check if pickup or destination is empty
-                  if (!pickup || !destination) {
-                    alert(
-                      "Please fill in both the pick-up and destination fields."
-                    );
-                    return; // Prevent form submission if any field is empty
-                  }
-                  e.preventDefault();
+              onClick={(e)=>{
+                e.preventDefault()
                   setVehiclePanel(true);
                   setpanelOpen(false);
-                }
-              }
-                type="submit"
+                submitHandler()
+                
+              }}
+           
                 className="mt-[2vw]  lg:mt-[0.5vw] w-full  rounded-md bg-black text-white py-[2vw] lg:py-[0.6vw] px-[0.6vw]"
               >
               
@@ -243,15 +258,21 @@ export default function Home() {
           className="fixed  w-full lg:w-[30vw] lg:h-[30vw] translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
         >
           <Vehiclepanel
+          setVehicleType={setVehicleType}
+           fare={fare}
             setConfirmRidePanel={setConfirmRidePanel}
             setVehiclePanel={setVehiclePanel}
           />
         </div>
         <div
           ref={confirmRidePanelRef}
-          className="fixed lg:w-[30vw]  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
+          className="fixed lg:w-[30vw] lg:h-[31vw]  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
         >
           <ConfirmRide
+          fare={fare}
+          pickup={pickup}
+          destination={destination}
+          vehicleType={vehicleType}
             setVehiclePanel={setVehiclePanel}
             setConfirmRidePanel={setConfirmRidePanel}
             setWaitingForDriver={setWaitingForDriver}

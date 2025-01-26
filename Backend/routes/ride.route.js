@@ -25,4 +25,6 @@ router.post(
 
 );
 
+router.post('/getfare', authMiddleware.authUser,rideController.getFare)
+
 module.exports = router
