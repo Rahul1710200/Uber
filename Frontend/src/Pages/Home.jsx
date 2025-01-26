@@ -206,6 +206,13 @@ export default function Home() {
               <button
               onClick={
                 (e)=>{
+                  // Check if pickup or destination is empty
+                  if (!pickup || !destination) {
+                    alert(
+                      "Please fill in both the pick-up and destination fields."
+                    );
+                    return; // Prevent form submission if any field is empty
+                  }
                   e.preventDefault();
                   setVehiclePanel(true);
                   setpanelOpen(false);
