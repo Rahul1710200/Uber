@@ -266,7 +266,7 @@ export default function Home() {
         </div>
         <div
           ref={confirmRidePanelRef}
-          className="fixed lg:w-[30vw] lg:h-[31vw]  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
+          className="fixed lg:w-[30vw] h-[120vw] lg:h-[31vw]  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
         >
           <ConfirmRide
           fare={fare}
