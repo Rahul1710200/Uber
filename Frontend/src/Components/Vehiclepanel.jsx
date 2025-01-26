@@ -130,7 +130,7 @@ function Vehiclepanel(props) {
                 </span>
                 3
               </h4>
-              <h5 className="font-medium text-sm">2 mins away</h5>
+              <h5 className="font-medium text-sm">2 min away</h5>
               <p className="font-normal text-gray-600 text-xs">
                 Affordable compact rides
               </p>
