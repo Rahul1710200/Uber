@@ -63,7 +63,7 @@ export default function Home() {
     console.log("sugg", suggestions);
     setLocations([]);
     setLocations(suggestions);
-  }, 300);
+  }, 100);
 
   const debouncedFetchDestinationSuggestions = debounce(async (value) => {
     if (value.trim().length < 3) {
@@ -75,7 +75,7 @@ export default function Home() {
     console.log("sugg", suggestions);
     setLocations([]);
     setLocations(suggestions);
-  }, 300);
+  }, 100);
 
   const setCurrentLocation = () => {};
   useGSAP(() => {
