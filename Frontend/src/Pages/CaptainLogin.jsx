@@ -31,7 +31,12 @@ const Captainlogin =  () => {
       console.log("ress", response);
 
       if (response.status === 201) {
-        setCaptain(response.data.captain);
+        console.log("login response",response);
+        if (response.data && response.data.captain) {
+          setCaptain(response.data.captain);
+        } else {
+          console.error("Captain data not available in the response");
+        }
         localStorage.setItem("token", response.data.token);
         navigate("/captain-home");
       }

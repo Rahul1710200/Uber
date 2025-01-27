@@ -22,7 +22,6 @@ export default function UserProtectedWrapper({children}) {
 
   const token=localStorage.getItem('token');
   const navigate=useNavigate();
-  console.log();
  
 useEffect(() => {
   // Redirect to login if no token
@@ -44,7 +43,7 @@ useEffect(() => {
       );
       if (response.status === 200) {
         console.log("resss", response);
-        setUser(response.data.user);
+        setUser(response.data);
       }
     } catch (error) {
       console.error("Error fetching captain profile:", error);

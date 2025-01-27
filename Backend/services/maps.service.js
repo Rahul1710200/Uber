@@ -1,5 +1,5 @@
 const axios = require("axios");
-// const captainModel = require("../models/captain.model");
+const captainModel = require("../model/captain.model");
 
 module.exports.getAddressCoordinate = async (address) => {
   const apiKey = process.env.OPENCAGE_LOCATION_API_KEY;
@@ -160,3 +160,34 @@ module.exports.getSuggestions=async(input)=>{
   }
 
 }
+module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+  console.log("lat",ltd," ",lng," ",radius);
+
+    // radius in km
+try{
+  const captains = await captainModel.find({
+        location: {
+            $geoWithin: {
+                $centerSphere: [ [ ltd, lng ], radius / 6371 ]
+            }
+        }
+    });
+    console.log("captainsss",captains);
+      return captains;
+
+}catch(err){
+
+   console.error(
+     "Error updating captain:",
+     err.response?.data || err.message
+   );
+   throw new Error(
+     "Failed to update captain."
+   );
+
+}
+    
+
+  
+
+  }

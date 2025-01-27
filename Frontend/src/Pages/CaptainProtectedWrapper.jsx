@@ -31,7 +31,7 @@ function CaptainProtectedWrapper({ children }) {
         );
         if (response.status === 200) {
           console.log("resss",response);
-          setCaptain(response.data.captain);
+          setCaptain(response.data);
         }
       } catch (error) {
         console.error("Error fetching captain profile:", error);

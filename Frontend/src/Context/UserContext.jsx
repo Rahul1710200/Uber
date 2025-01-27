@@ -4,11 +4,11 @@ import React, { createContext, useState } from 'react'
 
 function UserContext({children}) {
     const [user,setUser]=useState({
-        email:'',
-        fullName:{
-             firstName: '',
-            lastName: ''
-        }
+        // email:'',
+        // fullName:{
+        //      firstName: '',
+        //     lastName: ''
+        // }
     })
   return (
     <div>

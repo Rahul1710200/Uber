@@ -55,19 +55,22 @@ const captainSchema=new mongoose.Schema({
             required:true,
             enum:['car','moto','auto']
 
-        },
+        }
 
-        location:{
-            lat:{
+       
+    },
+     location:{
+            ltd:{
                 type:Number
             },
             lng:{
                 type:Number
             }
-        }
-    }
+        },
     
 })  
+
+// captainSchema.index({ location: "2dsphere" }); 
 
 captainSchema.methods.generateAuthToken = function() {
     const payload = { id: this._id };

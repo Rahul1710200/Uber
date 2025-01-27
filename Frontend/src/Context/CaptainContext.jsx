@@ -11,7 +11,7 @@ export const useCaptain=()=>{
 }
 
 const CaptainContext = ({ children }) => {
-    const [ captain, setCaptain ] = useState(null);
+    const [ captain, setCaptain ] = useState({});
     const [ isLoading, setIsLoading ] = useState(true);
     const [ error, setError ] = useState(null);
 

@@ -28,7 +28,7 @@ const CaptainRiding = () => {
   );
 
   return (
-    <div className="flex h-screen  w-full justify-center">
+    <div className="flex h-screen md:ml-[25vw]  md:w-[50vw]  w-full justify-center">
       <div className="h-screen lg:w-[30vw] w-full relative flex flex-col justify-end">
         <div className="fixed p-6 top-0 flex items-center justify-between w-screen">
           <img
@@ -63,12 +63,12 @@ const CaptainRiding = () => {
         </div>
         <div
           ref={finishRidePanelRef}
-          className="fixed w-full lg:w-[30vw] z-[500] bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
+          className="fixed w-full   lg:w-[30vw] z-[500] bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
         >
           <FinishRide setFinishRidePanel={setFinishRidePanel} />
         </div>
 
-        <div className="h-screen fixed w-screen top-0  z-[-1]">
+        <div className="h-screen md:w-[50vw] fixed w-screen top-0  z-[-1]">
           <img
             className="h-[143vw] lg:w-[30vw] lg:h-[40vw] w-full object-cover"
             src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"

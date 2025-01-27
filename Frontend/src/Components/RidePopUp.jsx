@@ -1,6 +1,8 @@
 import React from "react";
 
 const RidePopUp = (props) => {
+  // const { pickup, destination, fare } = props?.ride 
+  // console.log("user",props?.ride?.user);
   return (
     <div>
       <h5
@@ -20,7 +22,9 @@ const RidePopUp = (props) => {
             alt=""
           />
           <h2 className="text-lg font-medium">
-          Rahul Garg
+            {props?.ride?.user?.fullName.firstName +
+              " " +
+              props?.ride?.user?.fullName.lastName}
           </h2>
         </div>
         <h5 className="text-lg font-semibold">2.2 KM</h5>
@@ -32,7 +36,8 @@ const RidePopUp = (props) => {
             <div>
               <h3 className="text-lg font-medium">562/11-A</h3>
               <p className="text-sm -mt-1 text-gray-600">
-jaipur              </p>
+                {props?.ride?.pickup}{" "}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-5 p-3 border-b-2">
@@ -40,14 +45,15 @@ jaipur              </p>
             <div>
               <h3 className="text-lg font-medium">562/11-A</h3>
               <p className="text-sm -mt-1 text-gray-600">
-Ahemadabd              </p>
+                {props?.ride?.destination}{" "}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-5 p-3">
             <i className="ri-currency-line"></i>
             <div>
-              <h3 className="text-lg font-medium">₹1222 </h3>
-              <p className="text-sm -mt-1 text-gray-600">Cash Cash</p>
+              <h3 className="text-lg font-medium">₹{props?.ride?.fare} </h3>
+              <p className="text-sm -mt-1 text-gray-600">Cash</p>
             </div>
           </div>
         </div>
@@ -55,6 +61,7 @@ Ahemadabd              </p>
           <button
             onClick={() => {
               props.setConfirmRidePopupPanel(true);
+              props.confirmRide()
             }}
             className=" bg-green-600 w-full text-white font-semibold p-2 px-10 rounded-lg"
           >

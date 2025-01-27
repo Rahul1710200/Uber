@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from 'axios'
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -8,6 +8,9 @@ import Vehiclepanel from "../Components/Vehiclepanel";
 import ConfirmRide from "../Components/ConfirmRide";
 import WaitFordriver from "../Components/WaitFordriver";
 import debounce from "lodash.debounce";
+import {SocketContext} from "../Context/SocketContext"
+import {UserDataContext} from "../Context/UserContext"
+import LookingFordriver from "../Components/LookingFordriver";
 
 // import LookingFordriver from "../Components/LookingFordriver";
 
@@ -32,6 +35,16 @@ export default function Home() {
   const confirmRidePanelRef = useRef();
   const vehicleFoundRef = useRef();
   const waitingForDriverRef = useRef();
+
+  const {sendMessage,receiveMessage,socket} = useContext(SocketContext)
+  const {user} = useContext(UserDataContext)
+
+  useEffect(()=>{
+    console.log("uuss",user);
+    console.log(socket.id);
+    socket.emit("join",{userType:"user",userId:user._id})
+
+  },[user])
 
  
 
@@ -141,6 +154,30 @@ export default function Home() {
     }
   }, [panelOpen]);
 
+   async function createRide() {
+
+    try{
+       const response = await axios.post(
+       `${import.meta.env.VITE_BASE_URL}/ride/create`,
+       {
+         pickup,
+         destination,
+         vehicleType,
+       },
+       {
+         headers: {
+           Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+       }
+     );
+
+    }catch(err){
+      console.error("something went wrong in creating ride")
+      throw err;
+    }
+ 
+   }
+
    const submitHandler = async () => {
    
 
@@ -191,10 +228,7 @@ export default function Home() {
               <i className="ri-arrow-down-wide-line"></i>
             </h5>
             <h4 className="text-2xl font-semibold">Find a trip</h4>
-            <form
-            
-              className="relative py-3"
-            >
+            <form className="relative py-3">
               <div className="line absolute h-16 w-1 top-[35%] -translate-y-1/2 left-5 bg-gray-700 rounded-full"></div>
               <input
                 className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full"
@@ -213,7 +247,7 @@ export default function Home() {
               />
               <input
                 onClick={() => {
-               setActiveField("destination");
+                  setActiveField("destination");
                   setpanelOpen(true);
                 }}
                 value={destination}
@@ -226,26 +260,23 @@ export default function Home() {
                 placeholder="Enter your destination"
               />
               <button
-              onClick={(e)=>{
-                e.preventDefault()
+                onClick={(e) => {
+                  e.preventDefault();
                   setVehiclePanel(true);
                   setpanelOpen(false);
-                submitHandler()
-                
-              }}
-           
+                  submitHandler();
+                }}
                 className="mt-[2vw]  lg:mt-[0.5vw] w-full  rounded-md bg-black text-white py-[2vw] lg:py-[0.6vw] px-[0.6vw]"
               >
-              
                 Find a Trip
               </button>
             </form>
           </div>
           <div ref={panelRef} className="h-[0%] bg-white  ">
             <LocationSearchPanel
-            setPickup={setPickup}
-            setDestination={setDestination}
-             activeField={activeField}
+              setPickup={setPickup}
+              setDestination={setDestination}
+              activeField={activeField}
               locations={locations}
               setPanelOpen={setpanelOpen}
               vehiclePanel={vehiclePanel}
@@ -258,8 +289,8 @@ export default function Home() {
           className="fixed  w-full lg:w-[30vw] lg:h-[30vw] translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
         >
           <Vehiclepanel
-          setVehicleType={setVehicleType}
-           fare={fare}
+            setVehicleType={setVehicleType}
+            fare={fare}
             setConfirmRidePanel={setConfirmRidePanel}
             setVehiclePanel={setVehiclePanel}
           />
@@ -269,22 +300,30 @@ export default function Home() {
           className="fixed lg:w-[30vw] h-[120vw] lg:h-[31vw]  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
         >
           <ConfirmRide
-          fare={fare}
-          pickup={pickup}
-          destination={destination}
-          vehicleType={vehicleType}
+            createRide={createRide}
+            setVehicleFound={setVehicleFound}
+            fare={fare}
+            pickup={pickup}
+            destination={destination}
+            vehicleType={vehicleType}
             setVehiclePanel={setVehiclePanel}
             setConfirmRidePanel={setConfirmRidePanel}
             setWaitingForDriver={setWaitingForDriver}
           />
         </div>
 
-        {/* <div
-        ref={vehicleFoundRef}
-        className="fixed  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
-      >
-        <LookingFordriver setVehicleFound={setVehicleFound} />
-      </div> */}
+        <div
+          ref={vehicleFoundRef}
+          className="fixed lg:w-[30vw] h-[110vw] lg:h-[27vw]  w-full  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
+        >
+          <LookingFordriver
+            vehicleType={vehicleType}
+            fare={fare}
+            pickup={pickup}
+            destination={destination}
+            setVehicleFound={setVehicleFound}
+          />
+        </div>
         <div
           ref={waitingForDriverRef}
           className="fixed  w-full lg:w-[30vw]  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
