@@ -28,7 +28,7 @@ module.exports.initializeSocket=(server)=> {
 
     socket.on("update-location-captain", async (data) => {
       const { userId, location } = data;
-      console.log("aaa",data);
+      // console.log("aaa",data);
 
       if (!location || !location.lat || !location.lng) {
         return socket.emit("error", { message: "Invalid location data" });
@@ -51,7 +51,7 @@ module.exports.initializeSocket=(server)=> {
       return socket.emit("error", { message: "Captain not found" });
     }
 
-    console.log("Updated captain:", updatedCaptain);
+    // console.log("Updated captain:", updatedCaptain);
   } catch (error) {
     console.error("Error updating location:", error);
     return socket.emit("error", { message: "An error occurred" });

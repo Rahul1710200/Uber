@@ -11,6 +11,7 @@ import { CaptainDataContext } from '../Context/CaptainContext';
 
 function CaptainHome() {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
+  const [passenger, setPassenger] = useState("")
   const [confirmRidePopupPanel, setConfirmRidePopupPanel] = useState(false);
   const [ride, setRide] = useState(null);
 
@@ -21,6 +22,7 @@ function CaptainHome() {
   const {captain}=useContext(CaptainDataContext)
 
     async function confirmRide() {
+      console.log("ride",ride);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/ride/confirm`,
         {
@@ -34,24 +36,27 @@ function CaptainHome() {
         }
       );
 
+      console.log("response confrim ride",response.data);
+      setPassenger(response.data);
+
       setRidePopupPanel(false);
       setConfirmRidePopupPanel(true);
     }
 
-  useEffect(()=>{
-    console.log("capatin",captain);
-    socket.emit("join", {  userId: captain._id,userType: "captain" });
+    useEffect(()=>{
+      console.log("capatin",captain);
+      socket.emit("join", {  userId: captain?._id,userType: "captain" });
 
     const updateLocation = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log("pppptt",{userId: captain._id,
+          console.log("pppptt",{userId: captain?._id,
             location: {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
             }});
           socket.emit("update-location-captain", {
-            userId: captain._id,
+            userId: captain?._id,
             location: {
               lat: position.coords.latitude,
               lng: position.coords.longitude,
@@ -127,13 +132,13 @@ function CaptainHome() {
         </div>
         <div
           ref={ridePopupPanelRef}
-          className="fixed md:w-[50vw]  lg:w-[30vw] w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
+          className="fixed md:w-[50vw] w-[100vw]   lg:w-[30vw]  z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
         >
           <RidePopUp
             ride={ride}
             setRidePopupPanel={setRidePopupPanel}
             setConfirmRidePopupPanel={setConfirmRidePopupPanel}
-            confirmRide={confirmRide}
+            confirmRide={confirmRide} 
           />
         </div>
         <div
@@ -141,6 +146,7 @@ function CaptainHome() {
           className="fixed md:w-[50vw]  lg:w-[30vw] w-full h-screen z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
         >
           <ConfirmRidePopUp
+          passenger={passenger}
             ride={ride}
             setConfirmRidePopupPanel={setConfirmRidePopupPanel}
             setRidePopupPanel={setRidePopupPanel}

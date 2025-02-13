@@ -34,7 +34,7 @@ useEffect(() => {
   const fetchUserProfile = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/User/profile`,
+        `${import.meta.env.VITE_BASE_URL}/user/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,11 +43,16 @@ useEffect(() => {
       );
       if (response.status === 200) {
         console.log("resss", response);
-        setUser(response.data);
+        if (response.data!=null){
+        //  localStorage.setItem("captain", response.data);
+
+         setUser(response.data);
+        }
+          
       }
     } catch (error) {
       console.error("Error fetching captain profile:", error);
-      // localStorage.removeItem("token");
+      localStorage.removeItem("token");
       navigate("/login");
     }
   };

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import axios from 'axios'
+import axios from "axios";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import "remixicon/fonts/remixicon.css";
@@ -8,9 +8,12 @@ import Vehiclepanel from "../Components/Vehiclepanel";
 import ConfirmRide from "../Components/ConfirmRide";
 import WaitFordriver from "../Components/WaitFordriver";
 import debounce from "lodash.debounce";
-import {SocketContext} from "../Context/SocketContext"
-import {UserDataContext} from "../Context/UserContext"
+import { SocketContext } from "../Context/SocketContext";
+import { UserDataContext } from "../Context/UserContext";
 import LookingFordriver from "../Components/LookingFordriver";
+import RidePopUp from "../Components/RidePopUp";
+import { useNavigate } from "react-router-dom";
+import LiveTracking from "../Components/LiveTracking";
 
 // import LookingFordriver from "../Components/LookingFordriver";
 
@@ -18,13 +21,14 @@ export default function Home() {
   const [pickup, setPickup] = useState("");
   const [locations, setLocations] = useState([]);
   const [destination, setDestination] = useState("");
-  const [vehicleType, setVehicleType] = useState("")
+  const [captain, setCaptain] = useState(null);
+  const [vehicleType, setVehicleType] = useState("");
   const [panelOpen, setpanelOpen] = useState(false);
   const [activeField, setActiveField] = useState(""); // Could be "pickup" or "destination"
 
   const [vehiclePanel, setVehiclePanel] = useState(false);
   const [confirmRidePanel, setConfirmRidePanel] = useState(false);
-  const [fare, setFare] = useState({})
+  const [fare, setFare] = useState({});
   const [pickUpSuggestions, setPickUpSuggestions] = useState([]);
   const [destinationSuggestions, setDestinationSuggestions] = useState([]);
   const [vehicleFound, setVehicleFound] = useState(false);
@@ -36,17 +40,21 @@ export default function Home() {
   const vehicleFoundRef = useRef();
   const waitingForDriverRef = useRef();
 
-  const {sendMessage,receiveMessage,socket} = useContext(SocketContext)
-  const {user} = useContext(UserDataContext)
+  const { sendMessage, receiveMessage, socket } = useContext(SocketContext);
+  const { user } = useContext(UserDataContext);
 
-  useEffect(()=>{
-    console.log("uuss",user);
+  useEffect(() => {
+    console.log("uuss", user);
     console.log(socket.id);
-    socket.emit("join",{userType:"user",userId:user._id})
+    socket.emit("join", { userType: "user", userId: user._id });
+  }, [user]);
 
-  },[user])
-
- 
+  socket.on("ride-confirmed", (ride) => {
+    console.log("captain-details", ride);
+    setCaptain(ride);
+    setVehicleFound(false);
+    setWaitingForDriver(true);
+  });
 
   const fetchSuggestions = async (query) => {
     try {
@@ -153,54 +161,60 @@ export default function Home() {
       });
     }
   }, [panelOpen]);
+  const navigate=useNavigate()
 
-   async function createRide() {
+  socket.on("ride-started", (ride) => {
+    console.log("rid startede",ride);
+    setWaitingForDriver(false);
+    navigate("/riding", { state: { ride } }); // Updated navigate to include ride data
+  });
+  async function createRide() {
+    console.log("calling create ride");
+    console.log("pickup", pickup);
+    console.log("pickup", destination);
+    console.log("pickup", vehicleType);
 
-    try{
-       const response = await axios.post(
-       `${import.meta.env.VITE_BASE_URL}/ride/create`,
-       {
-         pickup,
-         destination,
-         vehicleType,
-       },
-       {
-         headers: {
-           Authorization: `Bearer ${localStorage.getItem("token")}`,
-         },
-       }
-     );
-
-    }catch(err){
-      console.error("something went wrong in creating ride")
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/ride/create`,
+        {
+          pickup,
+          destination,
+          vehicleType,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+    } catch (err) {
+      console.error("something went wrong in creating ride");
       throw err;
     }
- 
-   }
+  }
 
-   const submitHandler = async () => {
-   
+  const submitHandler = async () => {
+  
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/ride/getfare`,
 
-     try {
-       const response = await axios.post(
-         `${import.meta.env.VITE_BASE_URL}/ride/getfare`,
-         
-            { pickup, destination }, 
-            {
-             headers: {
-             Authorization: `Bearer ${localStorage.getItem("token")}`,
-           },
-          }
-         
-       );
-       console.log("fare", response);
-       setFare(response)
+        { pickup, destination },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log("fare", response);
+      setFare(response);
 
-       return response;
-     } catch (error) {
-       console.error("Error fetching suggestions:", error);
-     }
-   };
+      return response;
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  };
   return (
     <div className="h-screen w-full    flex    justify-center bg-gray-100  overflow-hidden">
       <div className="lg:h-[80vw] relative lg:w-[30vw] ">
@@ -209,7 +223,12 @@ export default function Home() {
           src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
           alt=""
         />
-        <div className="lg:h-[36vw] lg:w-[30vw]  h-screen w-screen">
+
+        {/* <div className="h-[0  vw] -z-400">
+        </div> */}
+        <div className="lg:h-[36vw] lg:w-[30vw] object-cover -z-10  h-screen w-screen">
+          {/* <LiveTracking /> */}
+
           <img
             className="w-full h-full object-cover"
             src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
@@ -328,7 +347,10 @@ export default function Home() {
           ref={waitingForDriverRef}
           className="fixed  w-full lg:w-[30vw]  translate-y-full  z-10 bottom-0 bg-white px-3 py-5"
         >
-          <WaitFordriver setWaitingForDriver={setWaitingForDriver} />
+          <WaitFordriver
+            captain={captain}
+            setWaitingForDriver={setWaitingForDriver}
+          />
         </div>
       </div>
     </div>

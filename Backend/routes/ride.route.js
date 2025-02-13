@@ -1,13 +1,13 @@
-const express = require('express')
-const router=express.Router()
-const rideController=require("../controllers/ride.controller")
-const authMiddleware=require("../middlewares/auth.middleware")
-const {body} =require('express-validator')
+const express = require("express");
+const router = express.Router();
+const rideController = require("../controllers/ride.controller");
+const authMiddleware = require("../middlewares/auth.middleware");
+const { body, query } = require("express-validator");
 
 router.post(
   "/create",
   authMiddleware.authUser,
- 
+
   body("pickup")
     .isString()
     .isLength({ min: 3 })
@@ -20,12 +20,10 @@ router.post(
     .isString()
     .isIn(["auto", "car", "moto"])
     .withMessage("Invalid vehicle type"),
-    rideController.createRide
-
-
+  rideController.createRide
 );
 
-router.post('/getfare', authMiddleware.authUser,rideController.getFare)
+router.post("/getfare", authMiddleware.authUser, rideController.getFare);
 router.post(
   "/confirm",
   authMiddleware.authCaptain,
@@ -33,4 +31,21 @@ router.post(
   rideController.confirmRide
 );
 
-module.exports = router
+router.get(
+  "/start-ride",
+  authMiddleware.authCaptain,
+  query("rideId").isMongoId().withMessage("Invalid ride id"),
+  query("otp")
+    .isString().isLength({ min: 6, max: 6 })
+    .withMessage("Invalid ride id"),
+
+  rideController.startRide
+);
+
+router.post(
+  "/end-ride",
+  authMiddleware.authCaptain,
+  body("rideId").isMongoId().withMessage("Invalid ride id"),
+  rideController.endRide
+);
+module.exports = router;

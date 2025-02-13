@@ -8,9 +8,12 @@ import FinishRide from "../Components/FinishRide";
 
 const CaptainRiding = () => {
   const [finishRidePanel, setFinishRidePanel] = useState(false);
+  // const [ridedata, setridedata] = useState("")
   const finishRidePanelRef = useRef(null);
   const location = useLocation();
-  //   const rideData = location.state?.ride;
+    const rideData = location.state?.ride;
+    // setridedata(rideData)
+    console.log("ride data",rideData);
 
   useGSAP(
     function () {
@@ -28,7 +31,7 @@ const CaptainRiding = () => {
   );
 
   return (
-    <div className="flex h-screen md:ml-[25vw]  md:w-[50vw]  w-full justify-center">
+    <div className="flex h-screen  md:ml-[25vw]  md:w-[50vw]  w-full justify-center">
       <div className="h-screen lg:w-[30vw] w-full relative flex flex-col justify-end">
         <div className="fixed p-6 top-0 flex items-center justify-between w-screen">
           <img
@@ -63,9 +66,11 @@ const CaptainRiding = () => {
         </div>
         <div
           ref={finishRidePanelRef}
-          className="fixed w-full   lg:w-[30vw] z-[500] bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
+          className="fixed w-full lg:w-[30vw] z-[500] bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
         >
-          <FinishRide setFinishRidePanel={setFinishRidePanel} />
+          <FinishRide 
+          rideData={rideData}
+          setFinishRidePanel={setFinishRidePanel} />
         </div>
 
         <div className="h-screen md:w-[50vw] fixed w-screen top-0  z-[-1]">

@@ -4,7 +4,7 @@ const RidePopUp = (props) => {
   // const { pickup, destination, fare } = props?.ride 
   // console.log("user",props?.ride?.user);
   return (
-    <div>
+    <div >
       <h5
         className="p-1 text-center w-[93%] absolute top-0"
         onClick={() => {

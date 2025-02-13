@@ -32,10 +32,11 @@ function CaptainProtectedWrapper({ children }) {
         if (response.status === 200) {
           console.log("resss",response);
           setCaptain(response.data);
+          // localStorage.setItem("captain", response.data)
         }
       } catch (error) {
         console.error("Error fetching captain profile:", error);
-        // localStorage.removeItem("token");
+        localStorage.removeItem("token");
         navigate("/captain-login");
       }
     };

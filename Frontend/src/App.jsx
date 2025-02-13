@@ -12,6 +12,8 @@ import CaptainProtectedWrapper from "./Pages/CaptainProtectedWrapper"
 import CaptainLogout from "./Pages/CaptainLogout"
 import Riding from "./Pages/Riding"
 import CaptainRiding from "./Pages/CaptainRiding"
+import LoginNumber from "./Pages/LoginNumber"
+import EnterOtp from "./Pages/EnterOtp"
 
 function App() {
   
@@ -21,6 +23,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Start />}></Route>
         <Route path="/login" element={<UserLogin />}></Route>
+        <Route path="/signin-with-number" element={<LoginNumber />}></Route>
+        <Route path="/enter-otp" element={<EnterOtp />}></Route>
         <Route path="/signup" element={<UserSignup />}></Route>
         <Route path="/captain-login" element={<CaptainLogin />}></Route>
         <Route path="/captain-signup" element={<CaptainSignup />}></Route>

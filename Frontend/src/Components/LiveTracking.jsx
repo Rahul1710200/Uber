@@ -1,68 +1,46 @@
-// import React, { useState, useEffect } from "react";
-// import { LoadScript, GoogleMap, Marker } from "@react-google-maps/api";
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
-// const containerStyle = {
-//   width: "100%",
-//   height: "100%",
-// };
+const LiveTracking = () => {
+  const [currentPosition, setCurrentPosition] = useState({
+    lat: 28.7041, // Default to Delhi
+    lng: 77.1025,
+  });
 
-// const center = {
-//   lat: -3.745,
-//   lng: -38.523,
-// };
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setCurrentPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      });
 
-// const LiveTracking = () => {
-//   const [currentPosition, setCurrentPosition] = useState(center);
+      const watchId = navigator.geolocation.watchPosition((position) => {
+        setCurrentPosition({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      });
 
-//   useEffect(() => {
-//     navigator.geolocation.getCurrentPosition((position) => {
-//       const { latitude, longitude } = position.coords;
-//       setCurrentPosition({
-//         lat: latitude,
-//         lng: longitude,
-//       });
-//     });
+      return () => navigator.geolocation.clearWatch(watchId);
+    }
+  }, []);
 
-//     const watchId = navigator.geolocation.watchPosition((position) => {
-//       const { latitude, longitude } = position.coords;
-//       setCurrentPosition({
-//         lat: latitude,
-//         lng: longitude,
-//       });
-//     });
+  return (
+    <MapContainer
+      center={currentPosition}
+      zoom={15}
+      style={{ height: "70vh", width: "29%" }}
+    >
+      {/* Free Tile Layer from OpenStreetMap */}
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-//     return () => navigator.geolocation.clearWatch(watchId);
-//   }, []);
+      {/* Marker for Current Location */}
+      <Marker position={currentPosition} />
+    </MapContainer>
+  );
+};
 
-//   useEffect(() => {
-//     const updatePosition = () => {
-//       navigator.geolocation.getCurrentPosition((position) => {
-//         const { latitude, longitude } = position.coords;
-
-//         console.log("Position updated:", latitude, longitude);
-//         setCurrentPosition({
-//           lat: latitude,
-//           lng: longitude,
-//         });
-//       });
-//     };
-
-//     updatePosition(); // Initial position update
-
-//     const intervalId = setInterval(updatePosition, 1000); // Update every 10 seconds
-//   }, []);
-
-//   return (
-//     <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
-//       <GoogleMap
-//         mapContainerStyle={containerStyle}
-//         center={currentPosition}
-//         zoom={15}
-//       >
-//         <Marker position={currentPosition} />
-//       </GoogleMap>
-//     </LoadScript>
-//   );
-// };
-
-// export default LiveTracking;
+export default LiveTracking;

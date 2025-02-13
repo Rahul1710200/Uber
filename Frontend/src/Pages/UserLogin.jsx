@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { UserDataContext } from '../Context/UserContext';
-import axios from 'axios';
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { UserDataContext } from "../Context/UserContext";
+import axios from "axios";
 
 function UserLogin() {
   const [email, setEmail] = useState();
@@ -13,8 +13,8 @@ function UserLogin() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    setError("")
-     setLoading(true);
+    setError("");
+    setLoading(true);
 
     const userdata = {
       email: email,
@@ -22,19 +22,21 @@ function UserLogin() {
     };
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`, userdata);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/user/login`,
+        userdata
+      );
       if (response.status === 201) {
-        console.log(response);
+        console.log("login", response);
         const data = response.data;
         setUser(data.user);
-        localStorage.setItem("token",data.token);
-        navigate('/home');
+        localStorage.setItem("token", data.token);
+        navigate("/home");
       }
     } catch (err) {
       setError("Login failed. Please check your credentials.");
-    } finally{
-      setLoading(false)
-
+    } finally {
+      setLoading(false);
     }
 
     setEmail("");
@@ -90,6 +92,13 @@ function UserLogin() {
             Create new Account
           </Link>
         </p>
+{/* 
+        <p className="text-center mt-4">
+          Or,{" "}
+          <Link to="/signin-with-number" className="text-blue-600">
+            Sign in with Phone Number
+          </Link>
+        </p> */}
       </div>
       {loading ? (
         <div className="flex justify-center gap-2 lg:mb-[1vw] mb-[7vw] items-center ">
@@ -101,7 +110,7 @@ function UserLogin() {
       ) : (
         " "
       )}
-      <div className="w-full  max-w-md lg:max-w-lg mt-4">
+      <div className="w-full max-w-md lg:max-w-lg mt-4">
         <Link
           to="/captain-login"
           className=" transform transition-transform duration-150 active:scale-95 bg-[#10b461] lg:mb-[0.2vw]  mb-[8vw] flex items-center justify-center text-white font-semibold rounded-lg px-4 py-2 w-full text-lg placeholder:text-base"

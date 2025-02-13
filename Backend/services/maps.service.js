@@ -1,5 +1,12 @@
 const axios = require("axios");
 const captainModel = require("../model/captain.model");
+const {LRUCache} = require("lru-cache");
+
+const cache = new LRUCache({
+  max: 100, // Max 100 entries
+  ttl: 1000 * 60 * 10, // 10 minutes
+});
+
 
 module.exports.getAddressCoordinate = async (address) => {
   const apiKey = process.env.OPENCAGE_LOCATION_API_KEY;
@@ -31,6 +38,12 @@ module.exports.getDistanceTimee = async (origin,destination) => {
     if(!origin || !destination){
         throw new Error("origin and destination are required");
     }
+
+      const cacheKey = `${origin}-${destination}`;
+      if (cache.has(cacheKey)) {
+        console.log("Cache hit for:", cacheKey);
+        return cache.get(cacheKey);
+      }
     const apiKey = process.env.OPENROUTES_DISTANCE_API_KEY;
     const url = `https://api.openrouteservice.org/v2/directions/driving-car`;
 
@@ -71,10 +84,23 @@ module.exports.getDistanceTimee = async (origin,destination) => {
         const duration = route.summary.duration; // Duration in seconds
         console.log("disss",distance,duration);
 
-        return {
-          distance: (distance / 1000).toFixed(2) + " km", // Convert to kilometers
-          duration: (duration / 60).toFixed(2) + " mins", // Convert to minutes
-        };
+        //  const result = { distance, duration };
+         
+
+         // Store result in cache
+        //  cache.set(cacheKey, result);
+         
+         const result={
+           
+           distance: (distance / 1000).toFixed(2) + " km", // Convert to kilometers
+           duration: (duration / 60).toFixed(2) + " mins", // 
+           
+          }
+          console.log("Cache stored for:", cacheKey,result);
+
+         return result
+
+       
       } else {
         throw new Error("No routes found!");
       }
@@ -86,6 +112,8 @@ module.exports.getDistanceTimee = async (origin,destination) => {
 
      
 };
+
+
 // module.exports.getDistanceTimee = async (origin, destination) => {
 //   const { getAddressCoordinate } = module.exports;
 
@@ -133,6 +161,25 @@ module.exports.getDistanceTimee = async (origin,destination) => {
 //     throw new Error("Failed to calculate distance and time");
 //   }
 // };
+// module.exports.getDistanceTimee = async (origin, destination) => {
+//   const apiKey = "182c4e18-1e24-4784-bdbd-e257140eb93f"; // Replace with your key
+//   const url = `https://graphhopper.com/api/1/route?point=${origin.lat},${origin.lng}&point=${destination.lat},${destination.lng}&vehicle=car&key=${apiKey}&locale=en&calc_points=false`;
+
+//   try {
+//     const response = await axios.get(url);
+//     const data = response.data.paths[0];
+
+//     console.log(`Distance: ${(data.distance / 1000).toFixed(2)} km`);
+//     console.log(`Duration: ${(data.time / 60000).toFixed(2)} mins`);
+
+//     return {
+//       distance: (data.distance / 1000).toFixed(2) + " km",
+//       duration: (data.time / 60000).toFixed(2) + " mins",
+//     };
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//   }
+// }
 
 
 module.exports.getSuggestions=async(input)=>{
