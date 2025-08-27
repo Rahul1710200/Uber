@@ -11,9 +11,9 @@ import debounce from "lodash.debounce";
 import { SocketContext } from "../Context/SocketContext";
 import { UserDataContext } from "../Context/UserContext";
 import LookingFordriver from "../Components/LookingFordriver";
-import RidePopUp from "../Components/RidePopUp";
+// import RidePopUp from "../Components/RidePopUp";
 import { useNavigate } from "react-router-dom";
-import LiveTracking from "../Components/LiveTracking";
+// import LiveTracking from "../Components/LiveTracking";
 
 // import LookingFordriver from "../Components/LookingFordriver";
 
@@ -64,7 +64,7 @@ export default function Home() {
           params: { input: query },
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          }, 
         }
       );
       return response;
@@ -75,11 +75,11 @@ export default function Home() {
   };
 
   const debouncedFetchPickupSuggestions = debounce(async (value) => {
-    if (value.trim().length < 3) {
-      // Don't make the request if the input is less than 3 characters
-      setLocations([]);
-      return;
-    }
+    // if (value.trim().length < 3) {
+    //   // Don't make the request if the input is less than 3 characters
+    //   setLocations([]);
+    //   return;
+    // }
     const suggestions = await fetchSuggestions(value);
     console.log("sugg", suggestions);
     setLocations([]);
@@ -87,11 +87,11 @@ export default function Home() {
   }, 100);
 
   const debouncedFetchDestinationSuggestions = debounce(async (value) => {
-    if (value.trim().length < 3) {
-      // Don't make the request if the input is less than 3 characters
-      setLocations([]);
-      return;
-    }
+    // if (value.trim().length < 3) {
+    //   // Don't make the request if the input is less than 3 characters
+    //   setLocations([]);
+    //   return;
+    // }
     const suggestions = await fetchSuggestions(value);
     console.log("sugg", suggestions);
     setLocations([]);

@@ -1,11 +1,81 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom"; // Added useLocation
-import { useEffect, useContext } from "react";
-import { SocketContext } from "../Context/SocketContext";
+import {  useContext } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { SocketContext } from "../Context/SocketContext";
+import axios from "axios";
 // import LiveTracking from "../components/LiveTracking";
 
+
+
+
 const Riding = (props) => {
+
+  const loadRazorpayscript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+
+
+  
+const handlePayment = async () => {
+  const script = await loadRazorpayscript();
+  if (!script) {
+    alert("Razorpay SDK failed to load. Check your internet");
+    return;
+  }
+
+  try{
+     const { data } = await axios.post(
+    `${import.meta.env.VITE_BASE_URL}/payment/create-payment`,
+    {
+      amount: ride?.fare,
+      currency: "INR",
+    }
+  );
+
+  const options = {
+    key: import.meta.env.VITE_RAZORPAY_ID,
+    amount: ride?.fare,
+    currency: "INR",
+    name: "Uber Clone",
+    description: "Ride  Payment",
+    order_id: data.orderId,
+    handler: async (response) => {
+      await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/payment/verify-payment`,
+        {
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+        }
+      );
+
+      alert("Payment successful"),
+       navigate("/home");
+    },
+
+    theme:{color:"#3399cc"}
+  };
+
+  const razorpay=new window.Razorpay(options)
+  razorpay.open()
+
+  }catch(err){
+    console.error("Error processing payment",err)
+  }
+};
+
+
+
+
   console.log("riding props",props);
   const location = useLocation();
   const { ride } = location.state || {};
@@ -27,7 +97,7 @@ const Riding = (props) => {
         >
           <i className="text-lg font-medium ri-home-5-line"></i>
         </Link>
-        <div className="h-[85vw] lg:h-[28vw] bg-white lg:w-[31.5vw] ">
+        <div className="h-[85vw] lg:h-[26vw]  bg-white lg:w-[31.5vw] ">
           <img
             className="w-full h-full object-cover"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPsQfKVcmFKoAydx-uqkFICDgldRDQcCe1dA&s"
@@ -77,7 +147,7 @@ const Riding = (props) => {
               </div>
             </div>
           </div>
-          <button className="w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg">
+          <button onClick={handlePayment} className="w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg">
             Make a Payment
           </button>
         </div>

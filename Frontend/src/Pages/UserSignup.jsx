@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Eye, EyeOff } from "lucide-react";
 import { UserDataContext } from '../Context/UserContext';
 
 const UserSignup = () => {
@@ -8,6 +9,7 @@ const UserSignup = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState("")
     const [loading, setLoading] = useState(false);
+     const [showPassword, setShowPassword] = useState(false);
   
   const [error2, setError2] = useState("")
   const [firstName, setFirstName] = useState('');
@@ -72,7 +74,7 @@ try{
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col  items-center">
           <img
             className="w-16 mb-6"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYQy-OIkA6In0fTvVwZADPmFFibjmszu2A0g&s"
@@ -129,18 +131,27 @@ try{
             />
 
             <h3 className="text-lg font-medium mb-2">Enter Password</h3>
-            <input
-              required
-              value={password}
-              onChange={(e) => {
-                setError2("");
-                setError("");
-                setPassword(e.target.value);
-              }}
-              className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
-              type="password"
-              placeholder="password"
-            />
+            <div className="relative">
+              <input
+                required
+                value={password}
+                onChange={(e) => {
+                  setError2("");
+                  setError("");
+                  setPassword(e.target.value);
+                }}
+                className="bg-[#eeeeee] mb-7 rounded-lg px-4 py-2 border w-full text-lg placeholder:text-base"
+                type={showPassword ? "text" : "password"}
+                placeholder="password"
+              />
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute cursor-pointer  top-[14px] right-[20px]  z-10"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </div>
+            </div>
+
             {error ? (
               <div className="text-red-500 text-[4.5vw] lg:text-[1.2vw] mb-[1vw] font-semibold">
                 {error}
@@ -155,7 +166,7 @@ try{
           </form>
           {loading ? (
             <div className="flex justify-center gap-2 lg:mb-[1vw] mb-[7vw] items-center ">
-              <span className=" text-green-400 text-2xl">Signing  in</span>
+              <span className=" text-green-400 text-2xl">Signing in</span>
               <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots"></div>
               <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[200ms]"></div>
               <div className="w-4 h-4 bg-green-400 rounded-full animate-bounceDots delay-[400ms]"></div>

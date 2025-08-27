@@ -11,6 +11,7 @@ const userRoute=require("./routes/user.routes")
 const captainRouter=require('./routes/captain.route')
 const mapRouter=require('./routes/maps.routes')
 const rideRouter=require("./routes/ride.route")
+const paymentRouter=require("./routes/payment.route")
 
 connectToDb()
 app.use(cors())
@@ -21,6 +22,7 @@ app.use("/user",userRoute);
 app.use("/captain",captainRouter);
 app.use("/maps",mapRouter);
 app.use("/ride",rideRouter);
+app.use("/payment",paymentRouter);
 
 app.get('/',(req,res)=>{
     res.send("hello")
